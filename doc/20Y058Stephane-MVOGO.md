@@ -5,10 +5,10 @@
 - **Prénom** : Franck Stéphane  
 - **Matricule** : 20Y058  
 
-## Commentaires et Observations sur le TP de Recherche (3 jours)
+## Commentaires et Observations personnel sur le TP
 
 1. **Prise en main initiale de UNLocBox**  
-   La première approche de la boîte à outils UNLocBox s’est révélée assez complexe. La compréhension de la structure des fonctions et des solveurs a nécessité une phase d’adaptation. Toutefois, après exploration et manipulation des différents modules, l’utilisation des outils d’optimisation s’est avérée plus intuitive et efficace.
+   La première approche de la boîte à outils UNLocBox s’est révélée assez complexe. La compréhension de la structure des fonctions et des solveurs a nécessité une phase d’adaptation. Toutefois, après exploration et manipulation des différents modules, l’utilisation des outils d’optimisation s’est amélioré mais la maîtrise n'y est pas encore. Comprendre et assimiler les notions liées à ses diverses applications y ont également joué un très grand rôle
 
 2. **Gestion des paramètres et des limites computationnelles**  
    Les opérations sur les paramètres de grande taille ont mis en évidence certaines contraintes de calcul. Cependant, les méthodes d’optimisation intégrées dans UNLocBox permettent de gérer ces limites de manière satisfaisante, garantissant une convergence stable et une manipulation fluide des modèles.
