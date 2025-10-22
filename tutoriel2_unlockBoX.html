@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INF 4127 : Apprendre UNLocBoX - Optimisation Convexe Pratique</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-matlab.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; padding: 20px; background-color: #f8f9fa; }
+        h1, h2, h3 { color: #007bff; }
+        .code-block { margin-bottom: 20px; }
+        .table { margin-bottom: 20px; }
+        nav { margin-bottom: 30px; }
+        .exercise { background: #e9ecef; border-left: 5px solid #007bff; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .tip { background: #d4edda; border-left: 5px solid #28a745; padding: 10px; margin-bottom: 20px; }
+        .context { background: #f1f8ff; border-left: 5px solid #007bff; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .code-header { background: #343a40; color: #fff; padding: 10px; border-radius: 5px 5px 0 0; }
+        .btn-copy { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; position: absolute; top: 10px; right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-5">
+            <h1>INF 4127 : Apprendre UNLocBoX</h1>
+            <h2>Tutoriel Pratique pour l'Optimisation Convexe</h2>
+            <p><strong>Auteurs :</strong><br>
+            20Y058 - MVOGO MONDOMAN Franck Stéphane<br>
+            22Y567 - ETOUNDI TSANGA ELIHU F.<br>
+            21T2487 - ABANDA ARMAND WILFRIED</p>
+            <p><strong>Institut :</strong><br>
+            Université de Yaoundé I<br>
+            Département d'Informatique</p>
+            <p><strong>Superviseur :</strong> Pr PAULIN MELATAGIA</p>
+        </header>
+
+        <p>Ce tutoriel interactif vous guide pour maîtriser <strong>UNLocBoX</strong>, une boîte à outils MATLAB pour l’optimisation convexe. Nous commençons par expliquer les concepts théoriques clés, suivis d’exercices pratiques avec du code exécutable. Chaque exercice est précédé d’un contexte clair pour comprendre son utilité.</p>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="#theory">1. Concepts théoriques</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#setup">2. Installation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#functions">3. Créer des fonctions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#solvers">4. Utiliser les solveurs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#denoising">5. Débruitage audio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#inpainting">6. Inpainting d’image</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#nextsteps">7. Étapes suivantes</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section id="theory">
+            <h2>1. Concepts théoriques</h2>
+            <div class="context">
+                <h3>Qu’est-ce que l’optimisation numérique ?</h3>
+                <p>L’optimisation numérique consiste à trouver la meilleure solution à un problème mathématique, souvent en minimisant (ou maximisant) une fonction objectif \( f(x) \). Dans le cadre de l’<strong>optimisation convexe</strong>, la fonction \( f(x) \) est convexe, ce qui garantit :</p>
+                <ul>
+                    <li>Un <strong>optimum global</strong> unique (pas de minima locaux).</li>
+                    <li>Des algorithmes efficaces pour converger vers cette solution.</li>
+                </ul>
+                <p><strong>Exemple :</strong> Trouver \( x \) qui minimise \( f(x) = x^2 + 2x + 1 \). Applications : traitement d’images, apprentissage automatique, compression de données.</p>
+                <p><strong>Formulation générale :</strong></p>
+                \[ \min_{x \in \mathbb{R}^N} f(x) \]
+                <p>Dans UNLocBoX, on résout souvent des problèmes de la forme :</p>
+                \[ \min_{x \in \mathbb{R}^N} \sum_{k=1}^K f_k(x) \]
+                où chaque \( f_k(x) \) représente un terme du problème (ex. fidélité aux données, régularisation).</p>
+            </div>
+
+            <div class="context">
+                <h3>Qu’est-ce que UNLocBoX ?</h3>
+                <p><strong>UNLocBoX</strong> est une boîte à outils MATLAB open-source développée par l’EPFL pour résoudre des problèmes d’optimisation convexe. Ses caractéristiques principales :</p>
+                <ul>
+                    <li>Basée sur les <strong>méthodes de splitting proximal</strong> : divise le problème en sous-problèmes plus simples.</li>
+                    <li>Supporte les fonctions différentiables et non-différentiables.</li>
+                    <li>Adaptée aux grandes dimensions (ex. Big Data).</li>
+                    <li>Inclut des solveurs comme FISTA, ADMM, Douglas-Rachford.</li>
+                </ul>
+                <p><strong>Pourquoi utiliser UNLocBoX ?</strong> Il permet de coder rapidement des algorithmes complexes sans réimplémenter les solveurs.</p>
+            </div>
+
+            <div class="context">
+                <h3>Fonctions différentiables et non-différentiables</h3>
+                <p>Dans UNLocBoX, une fonction \( f_k(x) \) est définie comme une structure MATLAB avec :</p>
+                <ul>
+                    <li><code>eval</code> : Calcule la valeur de \( f(x) \).</li>
+                    <li><code>grad</code> : Calcule le gradient \( \nabla f(x) \) (si différentiable).</li>
+                    <li><code>prox</code> : Calcule l’opérateur proximal (si non-différentiable).</li>
+                    <li><code>beta</code> : Constante de Lipschitz du gradient (si applicable).</li>
+                </ul>
+                <p><strong>Fonction différentiable :</strong> Une fonction lisse avec un gradient défini, ex. \( f(x) = \frac{1}{2} \|Ax - y\|_2^2 \). On utilise le gradient pour optimiser.</p>
+                <p><strong>Fonction non-différentiable :</strong> Une fonction non-lisse, ex. \( f(x) = \lambda \|x\|_1 \) (norme L1, favorise la parcimonie). On utilise l’<strong>opérateur proximal</strong> :</p>
+                \[ \text{prox}_{\gamma f}(x) = \arg\min_y \left\{ f(y) + \frac{1}{2\gamma} \|y - x\|_2^2 \right\} \]
+                <p><strong>Splitting proximal :</strong> Divise \( f(x) = f_1(x) + f_2(x) \) en sous-problèmes, en appliquant le gradient sur \( f_1 \) (si différentiable) et le proximal sur \( f_2 \) (si non-différentiable).</p>
+                <p><strong>Exemple :</strong> Pour \( f(x) = \frac{1}{2} \|Ax - y\|_2^2 + \lambda \|x\|_1 \), \( f_1 \) utilise le gradient, \( f_2 \) utilise <code>prox_l1</code>.</p>
+            </div>
+        </section>
+
+        <section id="setup">
+            <h2>2. Installation et configuration</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> Avant de coder, vous devez installer UNLocBoX pour accéder à ses solveurs et opérateurs proximaux. Cette étape configure MATLAB pour utiliser la boîte à outils.</p>
+            </div>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Installer et vérifier UNLocBoX.</p>
+                <ol>
+                    <li>Téléchargez UNLocBoX depuis <a href="https://lts2.epfl.ch/unlocbox/">https://lts2.epfl.ch/unlocbox/</a>.</li>
+                    <li>Copiez-collez ce code dans MATLAB :</li>
+                </ol>
+                <div class="code-block position-relative">
+                    <div class="code-header">Installation UNLocBoX</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Ajouter UNLocBoX au chemin MATLAB
+addpath(genpath('C:/UNLocBoX')); % Remplacez par votre chemin
+init_unlocbox;
+
+% Vérifier l'installation
+help solvep
+                    </code></pre>
+                </div>
+                <div class="tip">Si la documentation de <code>solvep</code> s’affiche, vous êtes prêt !</div>
+            </div>
+        </section>
+
+        <section id="functions">
+            <h2>3. Créer et tester des fonctions</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> Les fonctions sont au cœur d’UNLocBoX. Vous devez les définir correctement pour que les solveurs fonctionnent. Une fonction différentiable (ex. fidélité aux données) utilise un gradient, tandis qu’une fonction non-différentiable (ex. régularisation) utilise un opérateur proximal. Ces exercices vous apprennent à construire et tester ces fonctions.</p>
+            </div>
+
+            <h3>Exercice 1 : Fonction différentiable (L2-norm)</h3>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Créer une fonction de fidélité aux données \( f_1(x) = \frac{1}{2} \|Ax - y\|_2^2 \), courante dans les problèmes où l’on veut que \( Ax \approx y \).</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Fonction L2 : Fidélité aux données</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Données synthétiques
+n = 100; m = 50;
+A = randn(m, n); y = randn(m, 1);
+
+% Fonction f1 : ||Ax - y||_2^2
+f1.eval = @(x) 0.5 * norm(A*x - y)^2;
+f1.grad = @(x) A'*(A*x - y);
+f1.beta = norm(A)^2;
+
+% Testez la fonction
+x_test = zeros(n, 1);
+fprintf('Valeur de f1(x_test) : %.4f\n', f1.eval(x_test));
+                    </code></pre>
+                </div>
+                <div class="tip">La valeur affichée doit être positive (norme au carré). Essayez avec <code>x_test = ones(n, 1)</code> pour voir la différence.</div>
+            </div>
+
+            <h3>Exercice 2 : Fonction non-différentiable (L1-norm)</h3>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Créer une fonction de régularisation \( f_2(x) = \lambda \|x\|_1 \), qui favorise des solutions parcimonieuses (peu de valeurs non-nulles).</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Fonction L1 : Régularisation parcimonieuse</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+lambda = 0.1;
+f2.eval = @(x) lambda * norm(x, 1);
+f2.prox = @(x, T) prox_l1(x, lambda*T);
+
+% Testez le proximal
+x_test = [2; -1.5; 0.3; 0];
+T = 0.5;
+prox_result = f2.prox(x_test, T);
+disp('Proximal de x_test :'); disp(prox_result);
+                    </code></pre>
+                </div>
+                <div class="tip">Le résultat doit montrer des valeurs seuillées (ex. petites valeurs à 0). Essayez différents <code>T</code>.</div>
+            </div>
+        </section>
+
+        <section id="solvers">
+            <h2>4. Utiliser les solveurs</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> Les solveurs d’UNLocBoX minimisent la somme de fonctions, comme \( f_1(x) + f_2(x) \). <code>solvep</code> choisit automatiquement un algorithme adapté, tandis que <code>forward_backward</code> (FISTA) est rapide pour une fonction différentiable + une non-différentiable. Vous apprendrez à configurer et exécuter ces solveurs.</p>
+            </div>
+
+            <h3>Exercice 3 : Résolution simple avec solvep</h3>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Minimiser \( f_1(x) + f_2(x) \) défini ci-dessus avec <code>solvep</code>.</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Minimisation avec solvep</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Paramètres
+param.verbose = 1; % Affiche progression
+param.maxit = 100; % Max itérations
+param.tol = 1e-5;  % Tolérance
+
+% Point initial
+x0 = zeros(n, 1);
+
+% Résolution
+sol = solvep(x0, {f1, f2}, param);
+disp('Solution (5 premières composantes) :'); disp(sol(1:5));
+                    </code></pre>
+                </div>
+                <div class="tip">Vérifiez la console MATLAB pour voir la progression. La solution doit avoir peu de valeurs non-nulles (parcimonie).</div>
+            </div>
+
+            <h3>Exercice 4 : FISTA avec forward_backward</h3>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Utiliser <code>forward_backward</code> pour une convergence plus rapide.</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">FISTA avec forward_backward</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+param.gamma = 0.5 / f1.beta; % Pas d'itération
+[sol_fista, info] = forward_backward(x0, f1, f2, param);
+fprintf('Itérations FISTA : %d\n', info.iter);
+                    </code></pre>
+                </div>
+                <div class="tip">Comparez le nombre d’itérations avec <code>solvep</code>. FISTA est souvent plus rapide !</div>
+            </div>
+        </section>
+
+        <section id="denoising">
+            <h2>5. Débruitage audio</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> Le débruitage audio est une application courante en traitement du signal. On observe un signal audio bruité \( y = x + n \), où \( x \) est le signal propre et \( n \) est du bruit. L’objectif est de récupérer \( x \) en minimisant :</p>
+                \[ \min_x \frac{1}{2} \|x - y\|_2^2 + \lambda \|x\|_1 \]
+                <p>La norme L1 favorise un signal parcimonieux en fréquences (peu de composantes non-nulles). Ce problème est typique dans la restauration de signaux audio.</p>
+            </div>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Débruiter un signal audio simulé.</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Débruitage audio</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Simuler un signal audio bruité
+fs = 8000; t = 0:1/fs:1; % 1 seconde
+audio_clean = sin(2*pi*440*t) + 0.5*sin(2*pi*880*t); % Deux fréquences
+audio_noisy = audio_clean + 0.3*randn(size(t));
+
+% Fonction 1 : Fidélité aux données
+f1.eval = @(x) 0.5 * norm(x - audio_noisy)^2;
+f1.grad = @(x) x - audio_noisy;
+f1.beta = 1;
+
+% Fonction 2 : Régularisation L1
+lambda = 0.015;
+f2.eval = @(x) lambda * norm(x, 1);
+f2.prox = @(x, T) prox_l1(x, lambda*T);
+
+% Résolution
+param.verbose = 1; param.maxit = 200; param.tol = 1e-4;
+x0 = audio_noisy;
+sol_audio = solvep(x0, {f1, f2}, param);
+
+% Visualisation
+figure;
+subplot(3,1,1); plot(t, audio_clean); title('Audio original');
+subplot(3,1,2); plot(t, audio_noisy); title('Audio bruité');
+subplot(3,1,3); plot(t, sol_audio); title('Audio débruité');
+
+% Écouter
+sound(audio_noisy, fs); pause(2); sound(sol_audio, fs);
+                    </code></pre>
+                </div>
+                <div class="tip">Écoutez la différence. Ajustez <code>lambda</code> pour réduire le bruit tout en préservant les fréquences.</div>
+            </div>
+        </section>
+
+        <section id="inpainting">
+            <h2>6. Inpainting d’image</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> L’inpainting consiste à reconstruire les parties manquantes d’une image (ex. pixels masqués ou perdus). On utilise la <strong>norme de variation totale (TV)</strong> pour encourager des transitions lisses entre les pixels. Le problème est formulé comme :</p>
+                \[ \min_x \frac{1}{2} \|M \cdot x - M \cdot y\|_2^2 + \lambda \|x\|_{TV} \]
+                <p> où \( M \) est un masque binaire (1 pour les pixels observés, 0 sinon), et \( \|x\|_{TV} \) est la norme TV.</p>
+            </div>
+            <div class="exercise">
+                <p><strong>Objectif :</strong> Reconstruire une image avec 70 % de pixels manquants.</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Inpainting d’image avec TV</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Charger une image
+img = double(imread('cameraman.tif'))/255;
+[H, W] = size(img);
+mask = rand(H, W) > 0.3; % 70% des pixels visibles
+img_damaged = img .* mask;
+
+% Fonction 1 : Fidélité aux pixels observés
+f1.eval = @(x) 0.5 * sum((x(mask) - img_damaged(mask)).^2);
+f1.grad = @(x) (x - img_damaged) .* mask;
+f1.beta = 1;
+
+% Fonction 2 : Total Variation
+lambda_tv = 0.02;
+f2.eval = @(x) lambda_tv * norm_tv(x);
+f2.prox = @(x, T) prox_tv(x, T*lambda_tv);
+
+% Résolution
+param.verbose = 1; param.maxit = 300;
+x0 = img_damaged(:);
+sol = solvep(x0, {f1, f2}, param);
+
+% Visualisation
+figure;
+subplot(1,3,1); imshow(img); title('Original');
+subplot(1,3,2); imshow(img_damaged); title('Endommagée');
+subplot(1,3,3); imshow(reshape(sol, H, W)); title('Reconstituée');
+                    </code></pre>
+                </div>
+                <div class="tip">Ajustez <code>lambda_tv</code> pour des transitions plus ou moins lisses.</div>
+            </div>
+        </section>
+
+        <section id="nextsteps">
+            <h2>7. Étapes suivantes</h2>
+            <div class="context">
+                <p><strong>Contexte :</strong> Vous savez maintenant configurer des fonctions et utiliser des solveurs. Pour aller plus loin, combinez plusieurs fonctions ou explorez d’autres solveurs comme <code>admm</code> ou <code>chambolle_pock</code>. Voici un challenge pour combiner plusieurs régularisations.</p>
+            </div>
+            <div class="exercise">
+                <p><strong>Challenge :</strong> Combinez L2, L1 et TV pour débruiter une image.</p>
+                <div class="code-block position-relative">
+                    <div class="code-header">Challenge : L2 + L1 + TV</div>
+                    <button class="btn-copy" onclick="copyCode(this)">Copier</button>
+                    <pre><code class="language-matlab">
+% Image bruitée
+img = double(imread('cameraman.tif'))/255;
+img_noisy = img + 0.1*randn(size(img));
+
+% Fonctions
+f1.eval = @(x) 0.5 * norm(x(:) - img_noisy(:))^2;
+f1.grad = @(x) x(:) - img_noisy(:);
+f1.beta = 1;
+
+f2.eval = @(x) 0.01 * norm(x, 1);
+f2.prox = @(x, T) prox_l1(x, 0.01*T);
+
+f3.eval = @(x) 0.02 * norm_tv(x);
+f3.prox = @(x, T) prox_tv(x, T*0.02);
+
+% Résolution
+param.verbose = 1; param.maxit = 300;
+sol = solvep(img_noisy(:), {f1, f2, f3}, param);
+figure; imshow(reshape(sol, size(img))); title('Résultat L2+L1+TV');
+                    </code></pre>
+                </div>
+                <div class="tip">Ce code combine fidélité (L2), parcimonie (L1), et lissage (TV). Testez différents <code>lambda</code> !</div>
+            </div>
+            <p> Merci pour la lecture !</p>
+            <p>Veuillez Explorez les démos sur <a href="https://lts2.epfl.ch/unlocbox/">le site UNLocBoX</a> pour d’autres applications (ex. super-résolution, déconvolution).</p>
+        </section>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const code = button.parentElement.querySelector('pre code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copié !';
+                setTimeout(() => button.textContent = 'Copier', 2000);
+            });
+        }
+    </script>
+</body>
+</html>
