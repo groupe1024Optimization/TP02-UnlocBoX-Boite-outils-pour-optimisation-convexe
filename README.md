@@ -24,7 +24,6 @@ Comprendre les notions de splitting proximal et utiliser UNLocBoX pour la résol
    ```matlab
    addpath('chemin/vers/unlocbox');
    init_unlocbox;
-````
 
 ## Exemple d’utilisation
 
@@ -63,5 +62,4 @@ fprintf('Erreur de reconstruction : %.4f\n', norm(A*sol - b)/norm(b));
 * UNLocBoX : [https://lts2.epfl.ch/unlocbox/](https://lts2.epfl.ch/unlocbox/)
 * Combettes & Pesquet (2011). *Proximal Splitting Methods in Signal Processing.*
 
-```
 ```
