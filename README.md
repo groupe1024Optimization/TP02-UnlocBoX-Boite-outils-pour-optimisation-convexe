@@ -11,11 +11,22 @@
   
 ## Objectif du TP
 Comprendre les notions de splitting proximal et utiliser UNLocBoX pour la résolution de problèmes d’optimisation convexe.
+Ce projet consistait à réaliser une **présentation sur UNLocBoX**, une boîte à outils MATLAB/Octave pour l’optimisation convexe.  
+L’objectif était de comprendre et de montrer le fonctionnement des **solveurs proximaux**, le **splitting des fonctions** différentiables et non-différentiables, ainsi que l’utilisation pratique de l’outil.
 
 ## Contenu du projet
 - Présentation Beamer sur UNLocBoX  
 - Tutoriel 1 : Auformat pdf  
-- Tutoriel 2 : Page web 
+- Tutoriel 2 : Page web
+
+
+
+## Plan de présentation
+- Présentation théorique des solveurs et du splitting proximal.
+- Mise en pratique sur un problème simple de minimisation L1 + terme de fidélité.
+- Ajout de contraintes convexes et interprétation des résultats.
+- Applications concrètes : débruitage d’images, inpainting, compressed sensing.
+- Formats des supports produits : **PDF et HTML**. 
 
 ## Installation
 1. Télécharger UNLocBoX depuis : [https://lts2.epfl.ch/unlocbox/](https://lts2.epfl.ch/unlocbox/)  
